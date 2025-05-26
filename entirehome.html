@@ -144,6 +144,7 @@
 </script>
 <script type="module">
 import { setupDateValidation } from './js/room.js';
+import { setupBookingSubmission } from './js/booking.js'; // <-- Import this
 
 // Load only the modal from booking.html into the container
 fetch('booking.html')
@@ -156,6 +157,7 @@ fetch('booking.html')
     if (modal) {
       document.getElementById('booking-modal-container').appendChild(modal);
       setupDateValidation('startDate', 'endDate');
+      setupBookingSubmission('#bookingModal form'); // <-- Initialize booking submission
     }
   });
 

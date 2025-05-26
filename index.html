@@ -378,7 +378,7 @@
                             <h6 class="m-0 font-weight-bold text-primary">Reservations</h6>
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive">
+                            <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
                                 <table class="table table-bordered" id="reservationsTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
@@ -696,7 +696,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-// Use your Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyB5L9hv2MXY30hMCYEaVn_EdXRNTEdXZfc",
   authDomain: "roomsync-sia101.firebaseapp.com",
@@ -709,7 +708,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Fetch bookings from Firestore
 async function loadBookings() {
   const tbody = document.querySelector("#reservationsTable tbody");
   if (!tbody) return;

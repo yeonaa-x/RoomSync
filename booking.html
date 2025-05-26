@@ -155,6 +155,11 @@
     <script type="module">
     import { setupDateValidation } from './js/room.js';   
     setupDateValidation('startDate', 'endDate');
+  </script>
+  <script type="module">
+  import { setupBookingSubmission, setupMainFormToModalSync } from './js/booking.js';
+  setupBookingSubmission('#bookingModal form');
+  setupMainFormToModalSync();
 </script>
 </body>
 </html>

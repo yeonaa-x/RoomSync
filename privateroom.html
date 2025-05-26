@@ -118,6 +118,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <script type="module">
 import { setupDateValidation } from './js/room.js';
+import { setupBookingSubmission } from './js/booking.js';
 
 fetch('booking.html')
   .then(res => res.text())
@@ -128,10 +129,10 @@ fetch('booking.html')
     if (modal) {
       document.getElementById('booking-modal-container').appendChild(modal);
       setupDateValidation('startDate', 'endDate');
+      setupBookingSubmission('#bookingModal form'); 
     }
   });
 
-// Attach event listeners to all "Book it!" buttons
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.book-it-btn').forEach(function(btn) {
     btn.addEventListener('click', function(e) {

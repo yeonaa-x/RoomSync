@@ -118,32 +118,33 @@
         <!-- Booking Modal -->
 <div id="booking-modal-container"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  // Load only the modal from booking.html into the container
-  fetch('booking.html')
-    .then(res => res.text())
-    .then(html => {
-      // Create a temporary DOM to parse the fetched HTML
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = html;
-      // Find the modal by its ID
-      const modal = tempDiv.querySelector('#bookingModal');
-      if (modal) {
-        document.getElementById('booking-modal-container').appendChild(modal);
-         setupDateValidation('startDate', 'endDate');
-      }
-    });
+<script type="module">
+import { setupDateValidation } from './js/room.js';
+import { setupBookingSubmission } from './js/booking.js'; // <-- Add this line
 
-  // Attach event listeners to all "Book it!" buttons
-  document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.book-it-btn').forEach(function(btn) {
-      btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        var bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
-        bookingModal.show();
-      });
+fetch('booking.html')
+  .then(res => res.text())
+  .then(html => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    const modal = tempDiv.querySelector('#bookingModal');
+    if (modal) {
+      document.getElementById('booking-modal-container').appendChild(modal);
+      setupDateValidation('startDate', 'endDate');
+      setupBookingSubmission('#bookingModal form'); // <-- Add this line
+    }
+  });
+
+// Attach event listeners to all "Book it!" buttons
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.book-it-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      var bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
+      bookingModal.show();
     });
   });
+});
 </script>
     </body>
 </html>

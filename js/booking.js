@@ -49,7 +49,6 @@ export function setupBookingSubmission(formSelector = "#bookingModal form") {
 
 export function setupBookingConfirmation() {
   const bookingForm = document.querySelector('#bookingModal form');
-  const showConfirmationBtn = document.getElementById('showConfirmationBtn');
   const confirmationModalEl = document.getElementById('confirmationModal');
   const confirmationDetails = document.getElementById('confirmationDetails');
   const finalConfirmBtn = document.getElementById('finalConfirmBtn');
@@ -77,5 +76,24 @@ export function setupBookingConfirmation() {
   finalConfirmBtn.addEventListener('click', function () {
     bookingForm.requestSubmit();
     confirmationModal.hide();
+  });
+}
+
+
+export function setupMainFormToModalSync() {
+  const mainForm = document.querySelector('section .card form');
+  const modalForm = document.querySelector('#bookingModal form');
+  const showConfirmationBtn = document.getElementById('showConfirmationBtn');
+  const bookingModalEl = document.getElementById('bookingModal');
+  if (!mainForm || !modalForm || !showConfirmationBtn || !bookingModalEl) return;
+
+  const bookingModal = new bootstrap.Modal(bookingModalEl);
+
+  showConfirmationBtn.addEventListener('click', function () {
+    // Copy values from main form to modal form
+    ['roomType', 'name', 'contact', 'email', 'startDate', 'endDate', 'guests'].forEach(id => {
+      modalForm.querySelector(`#${id}`).value = mainForm.querySelector(`#${id}`).value;
+    });
+    bookingModal.show();
   });
 }
