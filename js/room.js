@@ -31,20 +31,3 @@ onAuthStateChanged(auth, (user) => {
 
 });
 
-export function setupDateValidation(startId = 'startDate', endId = 'endDate') {
-    const startDate = document.getElementById(startId);
-    const endDate = document.getElementById(endId);
-
-    if (startDate && endDate) {
-        const today = new Date().toISOString().split('T')[0];
-        startDate.min = today;
-        endDate.min = today;
-        startDate.addEventListener('change', function () {
-            endDate.min = startDate.value;
-            if (endDate.value < startDate.value) {
-                endDate.value = startDate.value;
-            }
-        });
-       
-    }
-}

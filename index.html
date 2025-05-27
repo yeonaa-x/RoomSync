@@ -19,6 +19,13 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <style>
+@media print {
+  body * { visibility: hidden; }
+  #reservationsTable, #reservationsTable * { visibility: visible; }
+  #reservationsTable { position: absolute; left: 0; top: 0; width: 100%; }
+}
+</style>
 
 </head>
 
@@ -114,8 +121,7 @@
                         <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
                         <div class="collapse-divider"></div>
                         <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a>
+                    
                     </div>
                 </div>
             </li>
@@ -368,11 +374,12 @@
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+                        <a href="#" id="generateReportBtn" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+  <i class="fas fa-download fa-sm text-white-50"></i> Generate Report
+</a>
                     </div>
 
-                    <!-- Reservations Table Section (moved here) -->
+
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">Reservations</h6>
@@ -382,17 +389,19 @@
                                 <table class="table table-bordered" id="reservationsTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>Name</th>
-                                            <th>Contact</th>
-                                            <th>Email</th>
-                                            <th>Room Type</th>
-                                            <th>Guests</th>
-                                            <th>Start Date</th>
-                                            <th>End Date</th>
+                                                <th>Name</th>
+                                                <th>Contact</th>
+                                                <th>Email</th>
+                                                <th>Room Type</th>
+                                                <th>Guests</th>
+                                                <th>Start Date</th>
+                                                <th>End Date</th>
+                                                <th>Payment Method</th>
+                                                <th>GCash Ref #</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- Data will be inserted here -->
+                            
                                     </tbody>
                                 </table>
                             </div>
@@ -725,6 +734,8 @@ async function loadBookings() {
       <td>${data.guests || ""}</td>
       <td>${data.startDate || ""}</td>
       <td>${data.endDate || ""}</td>
+    <td>${data.paymentMethod || ""}</td>
+      <td>${data.gcashRef || ""}</td>
     `;
     tbody.appendChild(row);
   });
@@ -732,6 +743,13 @@ async function loadBookings() {
     tbody.innerHTML = "<tr><td colspan='7'>No reservations found.</td></tr>";
   }
 }
+
+
+document.getElementById('generateReportBtn').addEventListener('click', function(e) {
+  e.preventDefault();
+
+  window.print();
+});
 
 loadBookings();
 </script>

@@ -57,10 +57,6 @@
                                     <input type="text" class="form-control" id="name" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="email" class="form-label">Email address</label>
-                                    <input type="email" class="form-control" id="email" required>
-                                </div>
-                                <div class="mb-3">
                                     <label for="contact" class="form-label">Contact Number</label>
                                     <input type="tel" class="form-control" id="contact" required pattern="[0-9]{11}" placeholder="09XXXXXXXXX">
                                 </div>
@@ -73,11 +69,31 @@
                                     <input type="date" class="form-control" id="endDate" required>
                                 </div>
                                 <div class="mb-3">
+                                    <label for="startTime" class="form-label">Start Time</label>
+                                    <input type="time" class="form-control" id="startTime" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="endTime" class="form-label">End Time</label>
+                                    <input type="time" class="form-control" id="endTime" required>
+                                </div>
+                                <div class="mb-3">
                                     <label for="guests" class="form-label">Number of Guests</label>
                                     <input type="number" class="form-control" id="guests" min="1" max="999" required>
                                 </div>
-                                <button type="button" id="showConfirmationBtn" class="btn btn-outline-dark bg-white w-100 fw-bold">Confirm Booking</button>
-                            </form>
+                                <div class="mb-3">
+  <label for="paymentMethod" class="form-label">Payment Method</label>
+  <select class="form-select" id="paymentMethod" required>
+    <option value="" disabled selected>Select payment method</option>
+    <option value="cash">Cash</option>
+    <option value="gcash">GCash</option>
+  </select>
+</div>
+<div class="mb-3" id="gcashDetails" style="display:none;">
+  <label for="gcashRef" class="form-label">GCash Reference Number</label>
+  <input type="text" id="gcashRef" name="gcashRef" class="form-control" pattern="\d{13}" maxlength="13" minlength="13">
+  <small class="form-text text-muted">After sending payment to <b>09926471047</b>, enter your GCash reference number here.</small>
+</div>
+                              <button type="submit" id="showConfirmationBtn" class="btn btn-outline-dark bg-white w-100 fw-bold">Confirm Booking</button>                            </form>
                         </div>
                     </div>
                 </div>
@@ -87,15 +103,16 @@
     <footer class="py-5 bg-dark">
         <div class="container"><p class="m-0 text-center text-white">Copyright &copy; RoomSync 2025</p></div>
     </footer>
-    <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-dark text-white">
-        <h5 class="modal-title" id="bookingModalLabel">Book Your Stay</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form>
+    <!-- Booking Modal -->
+<div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+  <form id="bookingForm">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-dark text-white">
+          <h5 class="modal-title" id="bookingModalLabel">Book Your Stay</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
           <div class="mb-3">
             <label for="roomType" class="form-label">What would you like to book?</label>
             <select class="form-select" id="roomType" required>
@@ -115,10 +132,6 @@
             <input type="tel" class="form-control" id="contact" required pattern="[0-9]{11}" placeholder="09XXXXXXXXX">
           </div>
           <div class="mb-3">
-            <label for="email" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="email" required>
-          </div>
-          <div class="mb-3">
             <label for="startDate" class="form-label">Booking Start Date</label>
             <input type="date" class="form-control" id="startDate" required>
           </div>
@@ -127,13 +140,34 @@
             <input type="date" class="form-control" id="endDate" required>
           </div>
           <div class="mb-3">
+            <label for="startTime" class="form-label">Start Time</label>
+            <input type="time" class="form-control" id="startTime" required>
+          </div>
+          <div class="mb-3">
+            <label for="endTime" class="form-label">End Time</label>
+            <input type="time" class="form-control" id="endTime" required>
+          </div>
+          <div class="mb-3">
             <label for="guests" class="form-label">Number of Guests</label>
             <input type="number" class="form-control" id="guests" min="1" max="999" required>
           </div>
-            <button type="submit" class="btn btn-outline-dark bg-white w-100 fw-bold">Confirm Booking</button>        </form>
+          <div class="mb-3">
+  <label for="paymentMethod" class="form-label">Payment Method</label>
+  <select class="form-select" id="paymentMethod" required>
+    <option value="" disabled selected>Select payment method</option>
+    <option value="cash">Cash</option>
+    <option value="gcash">GCash</option>
+  </select>
+</div>
+<div class="mb-3" id="gcashDetails" style="display:none;">
+  <label for="gcashRef" class="form-label">GCash Reference Number</label>
+  <input type="text" id="gcashRef" name="gcashRef" class="form-control" pattern="\d{13}" maxlength="13" minlength="13">
+  <small class="form-text text-muted">After sending payment to <b>09926471047</b>, enter your GCash reference number here.</small>
+</div>
+            <button id="finalConfirmBtn" class="btn btn-success w-100" type="submit">Confirm</button>
+        </div>
       </div>
     </div>
-  </div>
 </div>
     <!-- Confirmation Modal -->
 <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
@@ -145,7 +179,7 @@
       </div>
       <div class="modal-body">
         <ul class="list-group mb-3" id="confirmationDetails"></ul>
-        <button id="finalConfirmBtn" class="btn btn-success w-100">Confirm</button>
+        <button id="finalConfirmBtnConfirm" class="btn btn-success w-100">Confirm</button>
       </div>
     </div>
   </div>
@@ -153,13 +187,61 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/scripts.js"></script>
     <script type="module">
-    import { setupDateValidation } from './js/room.js';   
-    setupDateValidation('startDate', 'endDate');
-  </script>
-  <script type="module">
-  import { setupBookingSubmission, setupMainFormToModalSync } from './js/booking.js';
-  setupBookingSubmission('#bookingModal form');
-  setupMainFormToModalSync();
+    import { setupBookingSubmission, displayRoomInventory, setupDateValidation, restoreExpiredBookings } from './js/booking.js';
+
+fetch('booking.html')
+  .then(res => res.text())
+  .then(async html => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    const modal = tempDiv.querySelector('#bookingModal');
+    if (modal) {
+      document.getElementById('booking-modal-container').appendChild(modal);
+
+      setupDateValidation('startDate', 'endDate', 'startTime', 'endTime');
+      setupBookingSubmission('#bookingModal form');
+      await restoreExpiredBookings();
+      await displayRoomInventory();
+
+      // Attach event listeners to all "Book it!" buttons
+      document.querySelectorAll('.book-it-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          var bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
+          bookingModal.show();
+        });
+      });
+
+      // ADD THIS: Setup GCash toggle for the modal form after it's in the DOM
+      const modalForm = document.querySelector('#bookingModal form');
+      if (modalForm) setupGcashToggle(modalForm);
+    }
+  });
+</script>
+<script>
+function setupGcashToggle(form) {
+  const paymentMethod = form.querySelector('#paymentMethod');
+  const gcashDetails = form.querySelector('#gcashDetails');
+  const gcashRef = form.querySelector('#gcashRef');
+  if (!paymentMethod || !gcashDetails || !gcashRef) return;
+  function toggleGcashRef() {
+    if (paymentMethod.value === 'gcash') {
+      gcashDetails.style.display = 'block';
+      gcashRef.required = true;
+    } else {
+      gcashDetails.style.display = 'none';
+      gcashRef.required = false;
+      gcashRef.value = '';
+    }
+  }
+  paymentMethod.addEventListener('change', toggleGcashRef);
+  toggleGcashRef(); // Set initial state
+}
+document.addEventListener('DOMContentLoaded', function() {
+  // For main form
+  const mainForm = document.querySelector('section .card form');
+  if (mainForm) setupGcashToggle(mainForm);
+});
 </script>
 </body>
 </html>

@@ -19,10 +19,11 @@
             <div class="container px-4 px-lg-5">
                 <a class="navbar-brand" href="#!">RoomSync</a>
                     <form class="d-flex">
-                        <button class="btn btn-outline-dark" type="submit">
-                            Bookings
-                            <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
-                        </button>
+                        <button id="bookingsBtn" class="btn btn-outline-dark" type="button">
+    Bookings
+   
+</button>
+<button id="logoutBtn" class="btn btn-danger ms-2" type="button">Logout</button>
                     </form>
                 </div>
             </div>
@@ -116,22 +117,39 @@
         <!-- Booking Modal -->
 <div id="booking-modal-container"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
+<script type="module">
+  import { 
+    setupBookingSubmission, 
+    displayRoomInventory, 
+    setupDateValidation, 
+    restoreExpiredBookings,
+    setupMainFormToModalSync,
+    setupBookingConfirmation
+  } from './js/booking.js';
+
   // Load only the modal from booking.html into the container
   fetch('booking.html')
     .then(res => res.text())
-    .then(html => {
+    .then(async html => {
       // Create a temporary DOM to parse the fetched HTML
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = html;
-      // Find the modal by its ID
       const modal = tempDiv.querySelector('#bookingModal');
       if (modal) {
-        document.getElementById('booking-modal-container').appendChild(modal);
+        document.getElementById('booking-modal-container').appendChild(modal);  
+        setupDateValidation('startDate', 'endDate', 'startTime', 'endTime');
+        setupBookingSubmission('#bookingModal form');
+        setupBookingConfirmation();
+        await restoreExpiredBookings();
+        await displayRoomInventory();
+
+   
+        const modalForm = document.querySelector('#bookingModal form');
+        if (modalForm && typeof setupGcashToggle === 'function') setupGcashToggle(modalForm);
       }
     });
 
-  // Attach event listeners to all "Book it!" buttons
+ 
   document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.book-it-btn').forEach(function(btn) {
       btn.addEventListener('click', function(e) {
@@ -142,35 +160,66 @@
     });
   });
 </script>
-<script type="module">
-import { setupDateValidation } from './js/room.js';
-import { setupBookingSubmission } from './js/booking.js'; // <-- Import this
-
-// Load only the modal from booking.html into the container
-fetch('booking.html')
-  .then(res => res.text())
-  .then(html => {
-    // Create a temporary DOM to parse the fetched HTML
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
-    const modal = tempDiv.querySelector('#bookingModal');
-    if (modal) {
-      document.getElementById('booking-modal-container').appendChild(modal);
-      setupDateValidation('startDate', 'endDate');
-      setupBookingSubmission('#bookingModal form'); // <-- Initialize booking submission
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const bookingsBtn = document.getElementById('bookingsBtn');
+    if (bookingsBtn) {
+      bookingsBtn.addEventListener('click', function() {
+        window.location.href = 'reservations.html';
+      });
     }
   });
-
-// Attach event listeners to all "Book it!" buttons
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('.book-it-btn').forEach(function(btn) {
-    btn.addEventListener('click', function(e) {
-      e.preventDefault();
-      var bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
-      bookingModal.show();
-    });
-  });
-});
 </script>
+<script type="module">
+  import { loadBookings } from "./js/loadBookings.js";
+  loadBookings();
+</script>
+<script>
+function setupGcashToggle(form) {
+  const paymentMethod = form.querySelector('#paymentMethod');
+  const gcashDetails = form.querySelector('#gcashDetails');
+  const gcashRef = form.querySelector('#gcashRef');
+  if (!paymentMethod || !gcashDetails || !gcashRef) return;
+  function toggleGcashRef() {
+    if (paymentMethod.value === 'gcash') {
+      gcashDetails.style.display = 'block';
+      gcashRef.required = true;
+    } else {
+      gcashDetails.style.display = 'none';
+      gcashRef.required = false;
+      gcashRef.value = '';
+    }
+  }
+  paymentMethod.addEventListener('change', toggleGcashRef);
+  toggleGcashRef(); 
+}
+</script>
+<script type="module">
+  import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+
+  // Your Firebase config (reuse your existing config)
+  const firebaseConfig = {
+    apiKey: "AIzaSyB5L9hv2MXY30hMCYEaVn_EdXRNTEdXZfc",
+    authDomain: "roomsync-sia101.firebaseapp.com",
+    projectId: "roomsync-sia101",
+    storageBucket: "roomsync-sia101.appspot.com",
+    messagingSenderId: "279983739273",
+    appId: "1:279983739273:web:0808152771eb01e181d158"
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async function() {
+        await signOut(auth);
+        window.location.href = "login.html";
+      });
+    }
+  });
+</script>
+
     </body>
 </html>
