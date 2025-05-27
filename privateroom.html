@@ -16,17 +16,35 @@
     <body>
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" href="#!">RoomSync</a>
-                    <form class="d-flex">
-                        <button class="btn btn-outline-dark" type="submit">
-                            Bookings
-                            <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </nav>
+  <div class="container px-4 px-lg-5">
+    <a class="navbar-brand" href="home.html">RoomSync</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="room.html">Room</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="roomsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Room Types
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="roomsDropdown">
+            <li><a class="dropdown-item" href="privateroom.html">Private Room</a></li>
+            <li><a class="dropdown-item" href="studioroom.html">Studio Room</a></li>
+            <li><a class="dropdown-item" href="entirehome.html">Entire Home</a></li>
+            <li><a class="dropdown-item" href="luxuryvilla.html">Luxury Villa</a></li>
+          </ul>
+        </li>
+      </ul>
+      <form class="d-flex">
+  <a id="bookingsBtn" class="btn btn-outline-dark me-2" href="reservations.html">Bookings</a>
+  <button id="logoutBtn" class="btn btn-danger" type="button">Logout</button>
+</form>
+    </div>
+  </div>
+</nav>
         <!-- Header-->
         <header class="bg-dark py-5">
             <div class="container px-4 px-lg-5 my-5">
@@ -75,7 +93,7 @@
 
                                     <!-- Product actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-end"><a class="btn btn-outline-dark mt-auto" href="luxuryvilla.html">Book it!</a></div>
+                                <div class="text-end"><a class="btn btn-outline-dark mt-auto book-it-btn" href="#">Book it!</a></div>
                             </div>
       </div>
     </div>
@@ -113,9 +131,103 @@
         <footer class="py-5 bg-dark">
             <div class="container"><p class="m-0 text-center text-white">Copyright &copy; RoomSync 2025</p></div>
         </footer>
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="js/scripts.js"></script>
+        <!-- Booking Modal -->
+<div id="booking-modal-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module">
+  import { 
+    setupBookingSubmission, 
+    displayRoomInventory, 
+    setupDateValidation, 
+    restoreExpiredBookings,
+    setupMainFormToModalSync,
+    setupBookingConfirmation
+  } from './js/booking.js';
+
+  fetch('booking.html')
+  .then(res => res.text())
+  .then(async html => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    const modal = tempDiv.querySelector('#bookingModal');
+    if (modal) {
+      document.getElementById('booking-modal-container').appendChild(modal);
+
+      setupDateValidation('startDate', 'endDate', 'startTime', 'endTime');
+      setupBookingSubmission('#bookingModal form');
+      setupBookingConfirmation();
+      await restoreExpiredBookings();
+      await displayRoomInventory();
+
+      // Add this:
+      const modalForm = document.querySelector('#bookingModal form');
+      if (modalForm) setupGcashToggle(modalForm);
+
+      document.querySelectorAll('.book-it-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          var bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
+          bookingModal.show();
+        });
+      });
+    }
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const bookingsBtn = document.getElementById('bookingsBtn');
+    if (bookingsBtn) {
+      bookingsBtn.addEventListener('click', function() {
+        window.location.href = 'reservations.html';
+      });
+    }
+  });
+</script>
+<script>
+function setupGcashToggle(form) {
+  const paymentMethod = form.querySelector('#paymentMethod');
+  const gcashDetails = form.querySelector('#gcashDetails');
+  const gcashRef = form.querySelector('#gcashRef');
+  if (!paymentMethod || !gcashDetails || !gcashRef) return;
+  function toggleGcashRef() {
+    if (paymentMethod.value === 'gcash') {
+      gcashDetails.style.display = 'block';
+      gcashRef.required = true;
+    } else {
+      gcashDetails.style.display = 'none';
+      gcashRef.required = false;
+      gcashRef.value = '';
+    }
+  }
+  paymentMethod.addEventListener('change', toggleGcashRef);
+  toggleGcashRef(); // Set initial state
+}
+</script>
+<script type="module">
+  import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+
+  // Your Firebase config (reuse your existing config)
+  const firebaseConfig = {
+    apiKey: "AIzaSyB5L9hv2MXY30hMCYEaVn_EdXRNTEdXZfc",
+    authDomain: "roomsync-sia101.firebaseapp.com",
+    projectId: "roomsync-sia101",
+    storageBucket: "roomsync-sia101.appspot.com",
+    messagingSenderId: "279983739273",
+    appId: "1:279983739273:web:0808152771eb01e181d158"
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async function() {
+        await signOut(auth);
+        window.location.href = "login.html";
+      });
+    }
+  });
+</script>
     </body>
 </html>
