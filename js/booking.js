@@ -55,6 +55,19 @@ export async function decrementInventory(roomType) {
   }
 }
 
+export async function incrementInventory(roomType) {
+  const docRef = doc(db, "inventory", "rooms");
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+    if (data[roomType] !== undefined) {
+      data[roomType]++;
+      await updateDoc(docRef, { [roomType]: data[roomType] });
+      await displayRoomInventory();
+    }
+  }
+}
+
 export function setupBookingSubmission(formSelector = "#bookingModal form") {
   const auth = getAuth();
   let currentUser = null;

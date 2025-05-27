@@ -16,18 +16,35 @@
     <body>
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" href="#!">RoomSync</a>
-                    <form class="d-flex">
-                        <button id="bookingsBtn" class="btn btn-outline-dark" type="button">
-    Bookings
- 
-</button>
-<button id="logoutBtn" class="btn btn-danger ms-2" type="button">Logout</button>
-                    </form>
-                </div>
-            </div>
-        </nav>
+  <div class="container px-4 px-lg-5">
+    <a class="navbar-brand" href="home.html">RoomSync</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="room.html">Room</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="roomsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Room Types
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="roomsDropdown">
+            <li><a class="dropdown-item" href="privateroom.html">Private Room</a></li>
+            <li><a class="dropdown-item" href="studioroom.html">Studio Room</a></li>
+            <li><a class="dropdown-item" href="entirehome.html">Entire Home</a></li>
+            <li><a class="dropdown-item" href="luxuryvilla.html">Luxury Villa</a></li>
+          </ul>
+        </li>
+      </ul>
+      <form class="d-flex">
+  <a id="bookingsBtn" class="btn btn-outline-dark me-2" href="reservations.html">Bookings</a>
+  <button id="logoutBtn" class="btn btn-danger" type="button">Logout</button>
+</form>
+    </div>
+  </div>
+</nav>
         <!-- Header-->
         <header class="bg-dark py-5">
             <div class="container px-4 px-lg-5 my-5">

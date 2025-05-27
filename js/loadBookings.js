@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-auth.js";
+import { getFirestore, collection, getDocs, query, where, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+import { incrementInventory } from "./booking.js"; // adjust path if needed
 
 const firebaseConfig = {
   apiKey: "AIzaSyB5L9hv2MXY30hMCYEaVn_EdXRNTEdXZfc",
@@ -14,26 +15,22 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-export async function loadBookings() {
+export async function loadBookings(userEmail) {
   const tbody = document.querySelector("#reservationsTable tbody");
   tbody.innerHTML = "<tr><td colspan='9'>Loading...</td></tr>";
 
-  const auth = getAuth();
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      tbody.innerHTML = "<tr><td colspan='9'>Please log in to view your bookings.</td></tr>";
-      return;
-    }
+  // Query bookings for the current user
+  const bookingsQuery = query(collection(db, "bookings"), where("email", "==", userEmail));
+  const querySnapshot = await getDocs(bookingsQuery);
 
-    const userEmail = user.email;
-    const bookingsRef = collection(db, "bookings");
-    const q = query(bookingsRef, where("email", "==", userEmail));
-    const querySnapshot = await getDocs(q);
-
-    tbody.innerHTML = "";
+  tbody.innerHTML = "";
+  if (querySnapshot.size === 0) {
+    tbody.innerHTML = "<tr><td colspan='9'>No reservations found.</td></tr>";
+  } else {
     querySnapshot.forEach((doc) => {
       const data = doc.data();
       const row = document.createElement("tr");
+      row.setAttribute("data-id", doc.id);
       row.innerHTML = `
         <td>${data.name || ""}</td>
         <td>${data.contact || ""}</td>
@@ -44,18 +41,19 @@ export async function loadBookings() {
         <td>${data.endDate || ""}</td>
         <td>${data.paymentMethod || ""}</td>
         <td>${data.gcashRef || ""}</td>
+        <td><button class="btn btn-danger btn-sm cancel-btn">Cancel</button></td>
       `;
       tbody.appendChild(row);
     });
-    if (tbody.innerHTML === "") {
-      tbody.innerHTML = "<tr><td colspan='9'>No reservations found.</td></tr>";
-    }
-  });
+  }
 }
 
-document.getElementById('bookingsBtn').addEventListener('click', function() {
-  window.location.href = 'reservations.html';
-});
+const bookingsBtn = document.getElementById('bookingsBtn');
+if (bookingsBtn) {
+  bookingsBtn.addEventListener('click', function() {
+    window.location.href = 'reservations.html';
+  });
+}
 
 export function setupBookingSubmission(formSelector = "#bookingModal form") {
   document.addEventListener("submit", async function (e) {
@@ -101,3 +99,16 @@ function renderBookingRow(booking) {
     </tr>
   `;
 }
+
+document.addEventListener("click", async function(e) {
+  if (e.target.classList.contains("cancel-btn")) {
+    const row = e.target.closest("tr");
+    const docId = row.getAttribute("data-id");
+    const roomType = row.children[3].textContent; // 4th column is Room Type
+    if (confirm("Are you sure you want to cancel this booking?")) {
+      await deleteDoc(doc(db, "bookings", docId));
+      await incrementInventory(roomType);
+      row.remove();
+    }
+  }
+});
